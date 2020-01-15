@@ -41,7 +41,8 @@ def main():
     
     # Create model  
     # models.resnet18(num_classes=365)
-    model = ColorNet()
+    models.resnet50_bn(num_classes=365)
+    # model = ColorNet()
     
     # Use GPU if available
     if use_gpu:
@@ -112,7 +113,7 @@ def main():
     
     # Otherwise, train for given number of epochs
     validate(val_loader, model, criterion, False, 0) # validate before training
-    
+
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
