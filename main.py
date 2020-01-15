@@ -62,6 +62,7 @@ def main():
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
     
+    path_now = os.getcwd()
     create_folder(path_now + "/checkpoints/")
 
     # Create model  
