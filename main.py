@@ -212,7 +212,7 @@ def validate(val_loader, model, criterion, save_images, epoch):
         loss = criterion(output_ab, input_ab_variable) # check this!
         
         # Record loss and measure accuracy
-        losses.update(loss.data[0], input_gray.size(0))
+        losses.update(loss.item(), input_gray.size(0))
 
         # Save images to file
         if save_images:
