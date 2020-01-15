@@ -61,13 +61,13 @@ def main():
     global args, best_losses, use_gpu
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
-    
+
     path_now = os.getcwd()
     create_folder(path_now + "/checkpoints/")
 
     # Create model  
-    # models.resnet18(num_classes=365)
-    models.resnet50(num_classes=365)
+    # model = models.resnet18(num_classes=365)
+    model = models.resnet50(num_classes=365)
     # model = ColorNet()
     
     # Use GPU if available
