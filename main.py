@@ -84,7 +84,7 @@ def main():
         train_loader = torch.utils.data.DataLoader(train_imagefolder, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
         print('Loaded training data.')
     val_transforms = transforms.Compose([
-        transforms.Scale(256),
+        transforms.Resize(256),
         transforms.CenterCrop(224)
     ])
     val_directory = os.path.join(args.data, 'val')
