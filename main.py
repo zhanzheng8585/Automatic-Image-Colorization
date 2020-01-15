@@ -27,7 +27,7 @@ parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='man
 parser.add_argument('-b', '--batch-size', default=16, type=int, metavar='N', help='size of mini-batch (default: 16)')
 parser.add_argument('--lr', '--learning-rate', default=0.1, type=float, metavar='LR', help='learning rate at start of training')
 parser.add_argument('--weight-decay', '--wd', default=1e-10, type=float, metavar='W', help='weight decay (default: 1e-4)')
-parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true', help='use this flag to validate without training')
+parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true', default=False, help='use this flag to validate without training')
 parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
 
 # Current best losses
