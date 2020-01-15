@@ -77,7 +77,7 @@ def main():
     if not args.evaluate:
         train_directory = os.path.join(args.data, 'train')
         train_transforms = transforms.Compose([
-            transforms.RandomSizedCrop(224),
+            transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip()
         ])
         train_imagefolder = GrayscaleImageFolder(train_directory, train_transforms)
