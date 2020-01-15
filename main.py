@@ -39,7 +39,8 @@ def main():
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
     
-    # Create model  # models.resnet18(num_classes=365)
+    # Create model  
+    # models.resnet18(num_classes=365)
     model = ColorNet()
     
     # Use GPU if available
