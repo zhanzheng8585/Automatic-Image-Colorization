@@ -46,9 +46,11 @@ class ColorNet(nn.Module):
         
         # Build ResNet and change first conv layer to accept single-channel input
         # resnet_gray_model = models.resnet18(num_classes=365)
-        resnet_gray_model = models.resnet50(num_classes=365)
+        resnet_gray_model = models.resnet18(num_classes=365)
+        print(resnet_gray_model)
         resnet_gray_model.conv1.weight = nn.Parameter(resnet_gray_model.conv1.weight.sum(dim=1).unsqueeze(1).data)
-        
+        print(resnet_gray_model)
+
         # # Only needed if not resuming from a checkpoint: load pretrained ResNet-gray model
         # if torch.cuda.is_available(): # and only if gpu is available
         #     resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
