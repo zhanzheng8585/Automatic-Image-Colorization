@@ -45,14 +45,15 @@ class ColorNet(nn.Module):
         super(ColorNet, self).__init__()
         
         # Build ResNet and change first conv layer to accept single-channel input
-        resnet_gray_model = models.resnet18(num_classes=365)
+        # resnet_gray_model = models.resnet18(num_classes=365)
+        resnet_gray_model = models.resnet50(num_classes=365)
         resnet_gray_model.conv1.weight = nn.Parameter(resnet_gray_model.conv1.weight.sum(dim=1).unsqueeze(1).data)
         
-        # Only needed if not resuming from a checkpoint: load pretrained ResNet-gray model
-        if torch.cuda.is_available(): # and only if gpu is available
-            resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
-            resnet_gray_model.load_state_dict(resnet_gray_weights)
-            print('Pretrained ResNet-gray weights loaded')
+        # # Only needed if not resuming from a checkpoint: load pretrained ResNet-gray model
+        # if torch.cuda.is_available(): # and only if gpu is available
+        #     resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
+        #     resnet_gray_model.load_state_dict(resnet_gray_weights)
+        #     print('Pretrained ResNet-gray weights loaded')
 
         # Extract midlevel and global features from ResNet-gray
         self.midlevel_resnet = nn.Sequential(*list(resnet_gray_model.children())[0:6])
