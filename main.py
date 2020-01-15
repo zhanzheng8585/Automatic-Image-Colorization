@@ -88,6 +88,7 @@ def main():
         transforms.Resize(256),
         transforms.CenterCrop(224)
     ])
+
     val_directory = os.path.join(args.data, 'val')
     val_imagefolder = GrayscaleImageFolder(val_directory , val_transforms)
     val_loader = torch.utils.data.DataLoader(val_imagefolder, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
@@ -111,6 +112,7 @@ def main():
     
     # Otherwise, train for given number of epochs
     validate(val_loader, model, criterion, False, 0) # validate before training
+    
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
