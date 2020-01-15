@@ -198,9 +198,11 @@ def validate(val_loader, model, criterion, save_images, epoch):
         
         # Use GPU if available
         target = target.cuda() if use_gpu else target
-        input_gray_variable = Variable(input_gray, volatile=True).cuda() if use_gpu else Variable(input_gray, volatile=True)
-        input_ab_variable = Variable(input_ab, volatile=True).cuda() if use_gpu else Variable(input_ab, volatile=True)
-        target_variable = Variable(target, volatile=True).cuda() if use_gpu else Variable(target, volatile=True)
+
+        with torch.no_grad():
+            input_gray_variable = Variable(input_gray).cuda() if use_gpu else Variable(input_gray)
+            input_ab_variable = Variable(input_ab).cuda() if use_gpu else Variable(input_ab)
+            target_variable = Variable(target).cuda() if use_gpu else Variable(target)
        
         # Record time to load data (above)
         data_time.update(time.time() - end)
