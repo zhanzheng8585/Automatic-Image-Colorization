@@ -30,6 +30,29 @@ parser.add_argument('--weight-decay', '--wd', default=1e-10, type=float, metavar
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true', default=False, help='use this flag to validate without training')
 parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
 
+
+#Create folder 
+def create_folder(path):
+    # delete space at the begining
+    path=path.strip()
+    # delete / in the end
+    path=path.rstrip("/")
+ 
+    # if folder exist
+    # exist     True
+    # not exist   False
+    isExists=os.path.exists(path)
+ 
+    if not isExists:
+        # create folder
+        os.makedirs(path) 
+        #print path + ' folder created' + path
+        return True
+    else:
+        #print path + ' folder already exists'
+        return False
+
+
 # Current best losses
 best_losses = 1000.0
 use_gpu = torch.cuda.is_available()
@@ -39,9 +62,11 @@ def main():
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
     
+    create_folder(path_now + "/checkpoints/")
+
     # Create model  
     # models.resnet18(num_classes=365)
-    models.resnet50_bn(num_classes=365)
+    models.resnet50(num_classes=365)
     # model = ColorNet()
     
     # Use GPU if available
