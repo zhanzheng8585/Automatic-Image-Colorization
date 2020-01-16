@@ -394,9 +394,9 @@ def validate(val_loader, model, criterion, save_images, epoch):
         if save_images:
             for j in range(len(output_ab)):
                 path_now = os.getcwd()
-                create_folder(path_now + "/outputs/gray/epoch{}".format(epoch))
-                create_folder(path_now + "/outputs/color/epoch{}".format(epoch))
-                save_path = {'grayscale': 'outputs/gray/epoch' + str(epoch), 'colorized': 'outputs/color/epoch' + str(epoch)}
+                create_folder(path_now + "/outputs/gray/epoch{}/".format(epoch))
+                create_folder(path_now + "/outputs/color/epoch{}/".format(epoch))
+                save_path = {'grayscale': "/outputs/gray/epoch{}/".format(epoch), 'colorized': "/outputs/color/epoch{}/".format(epoch)}
                 save_name = 'img-{}-epoch-{}.jpg'.format(i * val_loader.batch_size + j, epoch)
                 visualize_image(input_gray[j], ab_input=output_ab[j].data, show_image=False, save_path=save_path, save_name=save_name)
 
