@@ -279,9 +279,10 @@ def main_worker(gpu, ngpus_per_node, args):
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
-        train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
+        # train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
         save_images = True #(epoch % 3 == 0)
-        losses = validate(val_loader, model, criterion, save_images, epoch)
+        losses = validate(val_loader, model, criterion, False, 0)
+        # losses = validate(val_loader, model, criterion, save_images, epoch)
         
         # Save checkpoint, and replace the old best model if the current model is better
         is_best_so_far = losses < best_losses
