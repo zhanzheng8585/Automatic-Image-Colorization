@@ -96,23 +96,6 @@ def main():
     elif args.optmzr == 'adam':
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-    scheduler = None
-    if args.lr_scheduler == 'cosine':
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len(train_loader),
-                                                         eta_min=4e-08)
-    elif args.lr_scheduler == 'default':
-        # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
-        epoch_milestones = [40, 80, 120, 160, 450]
-
-        """Set the learning rate of each parameter group to the initial lr decayed
-            by gamma once the number of epoch reaches one of the milestones
-        """
-        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                                   milestones=[i * len(train_loader) for i in epoch_milestones],
-                                                   gamma=0.1)
-    else:
-        raise Exception("unknown lr scheduler")
-
     # Resume from checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
@@ -155,6 +138,23 @@ def main():
     val_loader = torch.utils.data.DataLoader(val_imagefolder, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
     print('Loaded validation data.')
 
+    scheduler = None
+    if args.lr_scheduler == 'cosine':
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len(train_loader),
+                                                         eta_min=4e-08)
+    elif args.lr_scheduler == 'default':
+        # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
+        epoch_milestones = [40, 80, 120, 160, 450]
+
+        """Set the learning rate of each parameter group to the initial lr decayed
+            by gamma once the number of epoch reaches one of the milestones
+        """
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+                                                   milestones=[i * len(train_loader) for i in epoch_milestones],
+                                                   gamma=0.1)
+    else:
+        raise Exception("unknown lr scheduler")
+        
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
         save_images = True
