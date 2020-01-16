@@ -89,12 +89,11 @@ def create_folder(path):
         #print path + ' folder already exists'
         return False
 
-# Current best losses
-best_losses = 1000.0
-use_gpu = torch.cuda.is_available()
-
 def main():
     global args, best_losses, use_gpu
+    # Current best losses
+    use_gpu = torch.cuda.is_available()
+    best_losses = 1000.0
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
 
