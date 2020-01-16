@@ -51,8 +51,8 @@ class ColorizationNet(nn.Module):
         # Convolutional layers and upsampling
         x = torch.cat((midlevel_input,global_input), 1) 
         # x = F.relu(self.bn1(self.fusion(x)))
-        x = F.relu(self.bn1(self.deconv1_new(x)))
-        x = self.upsample(x)
+        # x = F.relu(self.bn1(self.deconv1_new(x)))
+        # x = self.upsample(x)
         x = F.relu(self.bn2(self.conv1(x)))
         x = self.upsample(x)
         x = F.relu(self.bn3(self.conv2(x)))
