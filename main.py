@@ -195,6 +195,7 @@ def main_worker(gpu, ngpus_per_node, args):
     if args.optmzr == 'sgd':
         optimizer = torch.optim.SGD(model.parameters(), optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
     elif args.optmzr == 'adam':
+        # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Resume from checkpoint
@@ -246,7 +247,7 @@ def main_worker(gpu, ngpus_per_node, args):
     elif args.lr_scheduler == 'default':
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
         # epoch_milestones = [40, 80, 120, 160, 450]
-        epoch_milestones = [20, 40, 60, 80, 100]
+        epoch_milestones = [10, 20, 40, 60, 80, 100]
 
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
