@@ -19,16 +19,30 @@ from model import ColorNet
 # Parse arguments and prepare program
 parser = argparse.ArgumentParser(description='Training and Using ColorNet')
 parser.add_argument('data', metavar='DIR', help='path to dataset')
-parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 0)')
-parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to .pth file checkpoint (default: none)')
-parser.add_argument('--pretrained', default='', type=str, metavar='PATH', help='path to pretrained .pth file (default: none)')
-parser.add_argument('--epochs', default=50, type=int, metavar='N', help='number of total epochs to run')
-parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='manual epoch number (overridden if loading from checkpoint)')
-parser.add_argument('-b', '--batch-size', default=16, type=int, metavar='N', help='size of mini-batch (default: 16)')
-parser.add_argument('--lr', '--learning-rate', default=0.1, type=float, metavar='LR', help='learning rate at start of training')
-parser.add_argument('--weight-decay', '--wd', default=1e-10, type=float, metavar='W', help='weight decay (default: 1e-4)')
-parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true', default=False, help='use this flag to validate without training')
-parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', help='print frequency (default: 10)')
+parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', 
+                    help='number of data loading workers (default: 0)')
+parser.add_argument('--resume', default='', type=str, metavar='PATH', 
+                    help='path to .pth file checkpoint (default: none)')
+parser.add_argument('--pretrained', default='', type=str, metavar='PATH', 
+                    help='path to pretrained .pth file (default: none)')
+parser.add_argument('--epochs', default=50, type=int, metavar='N', 
+                    help='number of total epochs to run')
+parser.add_argument('--start-epoch', default=0, type=int, metavar='N', 
+                    help='manual epoch number (overridden if loading from checkpoint)')
+parser.add_argument('-b', '--batch-size', default=16, type=int, metavar='N', 
+                    help='size of mini-batch (default: 16)')
+parser.add_argument('--lr', '--learning-rate', default=0.1, type=float, metavar='LR', 
+                    help='learning rate at start of training')
+parser.add_argument('--weight-decay', '--wd', default=1e-10, type=float, metavar='W', 
+                    help='weight decay (default: 1e-4)')
+parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true', default=False, 
+                    help='use this flag to validate without training')
+parser.add_argument('--print-freq', '-p', default=10, type=int, metavar='N', 
+                    help='print frequency (default: 10)')
+parser.add_argument('--optmzr', type=str, default='adam', metavar='OPTMZR',
+                    help='optimizer used (default: adam)')
+parser.add_argument('--lr-scheduler', type=str, default='default',
+                    help='define lr scheduler')
 
 #Create folder 
 def create_folder(path):
@@ -75,7 +89,28 @@ def main():
     
     # Create loss function, optimizer #criterion = nn.CrossEntropyLoss().cuda() if use_gpu else nn.CrossEntropyLoss()
     criterion = nn.MSELoss().cuda() if use_gpu else nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    optimizer = None
+    if args.optmzr == 'sgd':
+        optimizer = torch.optim.SGD(model.parameters(), optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
+    elif args.optmzr == 'adam':
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+
+    scheduler = None
+    if args.lr_scheduler == 'cosine':
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len(train_loader),
+                                                         eta_min=4e-08)
+    elif args.lr_scheduler == 'default':
+        # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
+        epoch_milestones = [40, 80, 120, 160, 450]
+
+        """Set the learning rate of each parameter group to the initial lr decayed
+            by gamma once the number of epoch reaches one of the milestones
+        """
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+                                                   milestones=[i * len(train_loader) for i in epoch_milestones],
+                                                   gamma=0.1)
+    else:
+        raise Exception("unknown lr scheduler")
 
     # Resume from checkpoint
     if args.resume:
@@ -136,12 +171,12 @@ def main():
         return  
     
     # Otherwise, train for given number of epochs
-    validate(val_loader, model, criterion, False, 0) # validate before training
+    # validate(val_loader, model, criterion, False, 0) # validate before training
 
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
-        train(train_loader, model, criterion, optimizer, epoch)
+        train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
         save_images = True #(epoch % 3 == 0)
         losses = validate(val_loader, model, criterion, save_images, epoch)
         
@@ -157,7 +192,7 @@ def main():
         
     return best_losses
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizer, epoch, args):
     '''Train model on data in train_loader for a single epoch'''
     print('Starting training epoch {}'.format(epoch))
 
@@ -172,6 +207,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
     # Train for single eopch
     end = time.time()
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
+        
+        scheduler.step()
         
         # Use GPU if available
         input_gray_variable = Variable(input_gray).cuda() if use_gpu else Variable(input_gray)
@@ -199,11 +236,15 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
         # Print model accuracy -- in the code below, val refers to value, not validation
         if i % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
+            for param_group in optimizer.param_groups:
+                current_lr = param_group['lr']
+            print('({0}) lr:[{1}]  '
+                  'Epoch: [{2}][{3}/{4}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
-                    epoch, i, len(train_loader), batch_time=batch_time,
+                    args.optmzr, current_lr, epoch, i, 
+                    len(train_loader), batch_time=batch_time,
                    data_time=data_time, loss=losses)) 
 
     print('Finished training epoch {}'.format(epoch))
