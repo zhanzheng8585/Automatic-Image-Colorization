@@ -91,6 +91,9 @@ def create_folder(path):
 
 def main():
     global args, best_losses, use_gpu
+    # Current best losses
+    use_gpu = torch.cuda.is_available()
+    best_losses = 1000.0
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
 
@@ -121,14 +124,11 @@ def main():
         mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, args))
     else:
         # Simply call main_worker function
-        main_worker(args.gpu, ngpus_per_node, args)
+        main_worker(args.gpu, ngpus_per_node, args, best_losses, use_gpu)
 
 
-def main_worker(gpu, ngpus_per_node, args):
-    # Current best losses
-    use_gpu = torch.cuda.is_available()
-    best_losses = 1000.0
-    
+def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
+
     # Create model  
     # models.resnet18(num_classes=365)
     model = ColorNet()
