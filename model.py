@@ -62,7 +62,7 @@ class ColorNet(nn.Module):
 
         # Extract midlevel and global features from ResNet-gray
         self.midlevel_resnet = nn.Sequential(*list(resnet_gray_model.children())[0:6])
-        self.global_resnet = nn.Sequential(*list(resnet_gray_model.children())[0:7])
+        self.global_resnet = nn.Sequential(*list(resnet_gray_model.children())[0:9])
         self.fusion_and_colorization_net = ColorizationNet()
 
     def forward(self, input_image):
@@ -71,6 +71,7 @@ class ColorNet(nn.Module):
         midlevel_output = self.midlevel_resnet(input_image)
         global_output = self.global_resnet(input_image)
 
+        new_global_output = global_output.expand(-1, -1, 28, 28)
         print(midlevel_output.size())
         print(global_output.size())
         # Combine features in fusion layer and upsample
