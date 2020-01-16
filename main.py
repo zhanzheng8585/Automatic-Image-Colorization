@@ -8,6 +8,14 @@ from torch.autograd import Variable
 from torchvision import datasets, transforms
 import torchvision.models as models
 import torch.optim as optim
+import torch.nn.parallel
+import torch.backends.cudnn as cudnn
+import torch.distributed as dist
+import torch.optim as optim
+import torch.multiprocessing as mp
+from collections import OrderedDict
+import torch.utils.data
+import torch.utils.data.distributed
 
 import numpy as np
 import matplotlib.pyplot as plt
