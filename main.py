@@ -7,6 +7,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 import torchvision.models as models
+import torch.optim as optim
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -209,7 +210,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
         
         scheduler.step()
-        
+
         # Use GPU if available
         input_gray_variable = Variable(input_gray).cuda() if use_gpu else Variable(input_gray)
         input_ab_variable = Variable(input_ab).cuda() if use_gpu else Variable(input_ab)
