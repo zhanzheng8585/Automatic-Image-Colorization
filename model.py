@@ -28,7 +28,8 @@ class ColorizationNet(nn.Module):
         print('Loaded colorization net.')
 
     def forward(self, midlevel_input, global_input):
-        
+        print(midlevel_input.size())
+        print(global_input.size())
         # Convolutional layers and upsampling
         x = torch.cat((midlevel_input,global_input), 1) 
         x = F.relu(self.deconv1_new(self.bn1(self.fusion(x))))
