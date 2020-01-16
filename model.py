@@ -73,7 +73,7 @@ class ColorNet(nn.Module):
 
         new_global_output = global_output.expand(-1, -1, 28, 28)
         print(midlevel_output.size())
-        print(global_output.size())
+        print(new_global_output.size())
         # Combine features in fusion layer and upsample
         output = self.fusion_and_colorization_net(midlevel_output, global_output)
         return output
