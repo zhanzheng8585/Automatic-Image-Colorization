@@ -186,7 +186,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         loss = criterion(output_ab, input_ab_variable) # MSE
         
         # Record loss and measure accuracy
-        losses.update(loss.data[0], input_gray.size(0))
+        losses.update(loss.item(), input_gray.size(0))
         
         # Compute gradient and optimize
         optimizer.zero_grad()
