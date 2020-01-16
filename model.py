@@ -72,6 +72,8 @@ class ColorNet(nn.Module):
         global_output = self.global_resnet(input_image)
 
         new_global_output = global_output.expand(-1, -1, 28, 28)
+        x = torch.cat((midlevel_output,new_global_output), 1)
+        print(x.size())
         # print(midlevel_output.size())
         # print(new_global_output.size())
         # Combine features in fusion layer and upsample
