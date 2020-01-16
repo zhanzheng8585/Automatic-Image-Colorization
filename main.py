@@ -76,7 +76,6 @@ use_gpu = torch.cuda.is_available()
 
 def main():
     global args, best_losses, use_gpu
-    global best_acc1
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
 
@@ -90,7 +89,7 @@ def main():
         print('Loaded model onto GPU.')
     
         if args.gpu is not None:
-        warnings.warn('You have chosen a specific GPU. This will completely '
+            warnings.warn('You have chosen a specific GPU. This will completely '
                       'disable data parallelism.')
 
     if args.dist_url == "env://" and args.world_size == -1:
