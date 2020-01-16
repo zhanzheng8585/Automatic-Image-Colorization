@@ -27,10 +27,11 @@ class ColorizationNet(nn.Module):
 
         print('Loaded colorization net.')
 
-    def forward(self, midlevel_input): #, global_input):
+    def forward(self, midlevel_input, global_input):
         
         # Convolutional layers and upsampling
-        x = F.relu(self.bn2(self.conv1(midlevel_input)))
+        x = F.relu(self.deconv1_new(self.bn1(self.fusion(midlevel_input+global_input))))
+        x = F.relu(self.bn2(self.conv1(x)))
         x = self.upsample(x)
         x = F.relu(self.bn3(self.conv2(x)))
         x = F.relu(self.conv3(x))
@@ -66,8 +67,8 @@ class ColorNet(nn.Module):
 
         # Pass input through ResNet-gray to extract features
         midlevel_output = self.midlevel_resnet(input_image)
-        # global_output = self.global_resnet(input_image)
+        global_output = self.global_resnet(input_image)
 
         # Combine features in fusion layer and upsample
-        output = self.fusion_and_colorization_net(midlevel_output) #, global_output)
+        output = self.fusion_and_colorization_net(midlevel_output, global_output)
         return output
