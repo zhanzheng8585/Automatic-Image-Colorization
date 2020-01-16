@@ -279,7 +279,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
-        train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
+        # train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
         if epoch % 5 == 0 and epoch == 1:
             save_images = True #(epoch % 3 == 0)
         else:
