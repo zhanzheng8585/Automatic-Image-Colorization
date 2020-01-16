@@ -154,7 +154,7 @@ def main():
                                                    gamma=0.1)
     else:
         raise Exception("unknown lr scheduler")
-        
+
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
         save_images = True
@@ -193,7 +193,7 @@ def main():
         
     return best_losses
 
-def train(train_loader, model, criterion, optimizer, epoch, args):
+def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
     '''Train model on data in train_loader for a single epoch'''
     print('Starting training epoch {}'.format(epoch))
 
