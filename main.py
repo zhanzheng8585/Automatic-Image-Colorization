@@ -82,14 +82,13 @@ def main():
     path_now = os.getcwd()
     create_folder(path_now + "/checkpoints/")
 
+    # # Use GPU if available
+    # if use_gpu:
+    #     model.cuda()
+    #     print('Loaded model onto GPU.')
     
-    # Use GPU if available
-    if use_gpu:
-        model.cuda()
-        print('Loaded model onto GPU.')
-    
-        if args.gpu is not None:
-            warnings.warn('You have chosen a specific GPU. This will completely '
+    if args.gpu is not None:
+        warnings.warn('You have chosen a specific GPU. This will completely '
                       'disable data parallelism.')
 
     if args.dist_url == "env://" and args.world_size == -1:
