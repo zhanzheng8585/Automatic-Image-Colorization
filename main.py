@@ -91,9 +91,6 @@ def create_folder(path):
 
 def main():
     global args, best_losses, use_gpu
-    # Current best losses
-    use_gpu = torch.cuda.is_available()
-    best_losses = 1000.0
     args = parser.parse_args()
     print('Arguments: {}'.format(args))
 
@@ -128,7 +125,10 @@ def main():
 
 
 def main_worker(gpu, ngpus_per_node, args):
-
+    # Current best losses
+    use_gpu = torch.cuda.is_available()
+    best_losses = 1000.0
+    
     # Create model  
     # models.resnet18(num_classes=365)
     model = ColorNet()
@@ -280,7 +280,10 @@ def main_worker(gpu, ngpus_per_node, args):
         
         # Train for one epoch, then validate
         # train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
-        save_images = True #(epoch % 3 == 0)
+        if epoch % 5 == 0 and epoch == 1:
+            save_images = True #(epoch % 3 == 0)
+        else:
+            save_images = False
         losses = validate(val_loader, model, criterion, False, 0)
         # losses = validate(val_loader, model, criterion, save_images, epoch)
         
