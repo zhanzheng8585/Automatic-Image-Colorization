@@ -66,6 +66,7 @@ def main():
     # Create model  
     # models.resnet18(num_classes=365)
     model = ColorNet()
+    print(model)
     
     # Use GPU if available
     if use_gpu:
