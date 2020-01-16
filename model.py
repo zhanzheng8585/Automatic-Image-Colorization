@@ -59,7 +59,7 @@ class ColorizationNet(nn.Module):
         x = F.relu(self.bn4(self.conv3(x)))
         x = self.upsample(x)
         x = F.relu(self.bn5(self.conv4(x)))
-        x = self.upsample(x)
+        # x = self.upsample(x)
         x = F.relu(self.bn6(self.conv5(x)))
         x = F.relu(self.conv6(x))
         x = self.upsample(x)
