@@ -28,8 +28,7 @@ class ColorizationNet(nn.Module):
         print('Loaded colorization net.')
 
     def forward(self, midlevel_input, global_input):
-        print(midlevel_input.size())
-        print(global_input.size())
+
         # Convolutional layers and upsampling
         x = torch.cat((midlevel_input,global_input), 1) 
         x = F.relu(self.bn1(self.fusion(x)))
@@ -72,6 +71,8 @@ class ColorNet(nn.Module):
         midlevel_output = self.midlevel_resnet(input_image)
         global_output = self.global_resnet(input_image)
 
+        print(midlevel_output.size())
+        print(global_output.size())
         # Combine features in fusion layer and upsample
         output = self.fusion_and_colorization_net(midlevel_output, global_output)
         return output
