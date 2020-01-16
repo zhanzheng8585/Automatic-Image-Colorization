@@ -245,7 +245,8 @@ def main_worker(gpu, ngpus_per_node, args):
                                                          eta_min=4e-08)
     elif args.lr_scheduler == 'default':
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
-        epoch_milestones = [40, 80, 120, 160, 450]
+        # epoch_milestones = [40, 80, 120, 160, 450]
+        epoch_milestones = [20, 40, 60, 80, 100]
 
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
