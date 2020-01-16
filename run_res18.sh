@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6
+export CUDA_VISIBLE_DEVICES=6,7
 
 python -u main.py           /home/zhanzheng/places365_standard \
 							--batch-size 64 \
