@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import _LRScheduler
-
+import numpy as np
 
 class CrossEntropyLossMaybeSmooth(nn.CrossEntropyLoss):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
