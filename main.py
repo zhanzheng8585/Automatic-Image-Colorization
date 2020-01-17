@@ -192,7 +192,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     # criterion = nn.MSELoss().cuda() if use_gpu else nn.MSELoss()
     optimizer = None
     if args.optmzr == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
+        optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=1e-4)
     elif args.optmzr == 'adam':
         # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -246,8 +246,10 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     elif args.lr_scheduler == 'default':
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
         # epoch_milestones = [40, 80, 120, 160, 450]
-        epoch_milestones = [10, 20, 40, 60, 80, 100]
-
+        if args.optmzr == 'sgd':
+            epoch_milestones = [20, 40, 60, 80, 100]
+        elif args.optmzr == 'adam':
+            epoch_milestones = [10, 20, 40, 60, 80, 100]
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
         """
@@ -276,11 +278,13 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     # Otherwise, train for given number of epochs
     # validate(val_loader, model, criterion, False, 0) # validate before training
 
+    validate(val_loader, model, criterion, True, args.start_epoch)
+
     for epoch in range(args.start_epoch, args.epochs):
         
         # Train for one epoch, then validate
         train(train_loader, model, criterion, optimizer, epoch, scheduler, args)
-        if epoch % 5 == 0 and epoch == 0:
+        if epoch % 5 == 0:
             save_images = True #(epoch % 3 == 0)
         else:
             save_images = False
