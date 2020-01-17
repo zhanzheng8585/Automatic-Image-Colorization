@@ -317,7 +317,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     # Otherwise, train for given number of epochs
     # validate(val_loader, model, criterion, False, 0) # validate before training
 
-    validate(val_loader, model, criterion, True, args.start_epoch)
+    # validate(val_loader, model, criterion, True, args.start_epoch)
 
     for epoch in range(args.start_epoch, args.epochs):
         

@@ -10,14 +10,14 @@ class ColorizationNet(nn.Module):
         self.midlevel_input_size = midlevel_input_size
         self.global_input_size = global_input_size
         # self.fusion = nn.Linear(midlevel_input_size + global_input_size, midlevel_input_size)
-        self.fusion = nn.Linear(midlevel_input_size + global_input_size, midlevel_input_size + global_input_size)
+        # self.fusion = nn.Linear(midlevel_input_size + global_input_size, midlevel_input_size + global_input_size)
 
         # self.bn1 = nn.BatchNorm1d(midlevel_input_size)
-        self.bn1 = nn.BatchNorm1d(midlevel_input_size + global_input_size)
+        # self.bn1 = nn.BatchNorm1d(midlevel_input_size + global_input_size)
 
         # Convolutional layers and upsampling
         # self.deconv1_new = nn.ConvTranspose2d(midlevel_input_size, 128, kernel_size=4, stride=2, padding=1)
-        self.deconv1_new = nn.ConvTranspose2d(midlevel_input_size + global_input_size, midlevel_input_size + global_input_size, kernel_size=4, stride=2, padding=1)
+        # self.deconv1_new = nn.ConvTranspose2d(midlevel_input_size + global_input_size, midlevel_input_size + global_input_size, kernel_size=4, stride=2, padding=1)
         # self.conv1 = nn.Conv2d(midlevel_input_size, 128, kernel_size=3, stride=1, padding=1)
         # self.bn2 = nn.BatchNorm2d(128)
         # self.conv2 = nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1)
@@ -32,16 +32,16 @@ class ColorizationNet(nn.Module):
         self.bn2 = nn.BatchNorm2d(512)
         self.conv2 = nn.Conv2d(512, 256, kernel_size=3, stride=1, padding=1)
         self.bn3 = nn.BatchNorm2d(256)
-        self.conv3 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1)
-        self.bn4 = nn.BatchNorm2d(256)
+        # self.conv3 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1)
+        # self.bn4 = nn.BatchNorm2d(256)
         self.conv4 = nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1)
         self.bn5 = nn.BatchNorm2d(128)
         self.conv5 = nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1)
         self.bn6 = nn.BatchNorm2d(64)
-        self.conv6 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1)
-        self.bn7 = nn.BatchNorm2d(64)
+        # self.conv6 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1)
+        # self.bn7 = nn.BatchNorm2d(64)
         self.conv7 = nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1)
-        self.bn8 = nn.BatchNorm2d(32)
+        # self.bn8 = nn.BatchNorm2d(32)
         self.conv8 = nn.Conv2d(32, 2, kernel_size=3, stride=1, padding=1)
         self.upsample = nn.Upsample(scale_factor=2)
         print('Loaded colorization net.')
@@ -56,13 +56,13 @@ class ColorizationNet(nn.Module):
         x = F.relu(self.bn2(self.conv1(x)))
         # x = self.upsample(x)
         x = F.relu(self.bn3(self.conv2(x)))
-        x = F.relu(self.bn4(self.conv3(x)))
-        x = self.upsample(x)
+        # x = F.relu(self.bn4(self.conv3(x)))
+        # x = self.upsample(x)
         x = F.relu(self.bn5(self.conv4(x)))
         x = self.upsample(x)
         x = F.relu(self.bn6(self.conv5(x)))
-        x = F.relu(self.conv6(x))
-        # x = self.upsample(x)
+        # x = F.relu(self.conv6(x))
+        x = self.upsample(x)
         x = F.relu(self.conv7(x))
         x = self.upsample(self.conv8(x))
         return x
@@ -80,10 +80,10 @@ class ColorNet(nn.Module):
         # print(resnet_gray_model)
 
         # Only needed if not resuming from a checkpoint: load pretrained ResNet-gray model
-        # if torch.cuda.is_available(): # and only if gpu is available
-        #     resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
-        #     resnet_gray_model.load_state_dict(resnet_gray_weights)
-        #     print('Pretrained ResNet-gray weights loaded')
+        if torch.cuda.is_available(): # and only if gpu is available
+            resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
+            resnet_gray_model.load_state_dict(resnet_gray_weights)
+            print('Pretrained ResNet-gray weights loaded')
 
         # Extract midlevel and global features from ResNet-gray
         self.midlevel_resnet = nn.Sequential(*list(resnet_gray_model.children())[0:6])
