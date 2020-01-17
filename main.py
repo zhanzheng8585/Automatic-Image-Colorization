@@ -22,6 +22,11 @@ import matplotlib.pyplot as plt
 from skimage.color import lab2rgb
 from skimage import io
 
+import prune_util
+from prune_util import GradualWarmupScheduler
+from prune_util import CrossEntropyLossMaybeSmooth
+from prune_util import mixup_data, mixup_criterion
+
 from utils import save_checkpoint, AverageMeter, visualize_image, GrayscaleImageFolder
 from model import ColorNet
 
@@ -67,6 +72,32 @@ parser.add_argument('--multiprocessing-distributed', action='store_true',
                          'N processes per node, which has N GPUs. This is the '
                          'fastest way to use PyTorch for either single node or '
                          'multi node data parallel training')
+parser.add_argument('--warmup', action='store_true', default=False,
+                    help='warm-up scheduler')
+parser.add_argument('--warmup-lr', type=float, default=0.0001, metavar='M',
+                    help='warmup-lr, smaller than original lr')
+parser.add_argument('--warmup-epochs', type=int, default=0, metavar='M',
+                    help='number of epochs for lr warmup')
+parser.add_argument('--mixup', action='store_true', default=False,
+                    help='ce mixup')
+parser.add_argument('--alpha', type=float, default=0.0, metavar='M',
+                    help='for mixup training, lambda = Beta(alpha, alpha) distribution. Set to 0.0 to disable')
+parser.add_argument('--smooth', action='store_true', default=False,
+                    help='lable smooth')
+parser.add_argument('--smooth-eps', type=float, default=0.0, metavar='M',
+                    help='smoothing rate [0.0, 1.0], set to 0.0 to disable')
+parser.add_argument('--no-tricks', action='store_true', default=False,
+                    help='disable all training tricks and restore original classic training process')
+
+""" disable all bag of tricks"""
+if args.no_tricks:
+    # disable all trick even if they are set to some value
+    args.lr_scheduler = "default"
+    args.warmup = False
+    args.mixup = False
+    args.smooth = False
+    args.alpha = 0.0
+    args.smooth_eps = 0.0
 
 #Create folder 
 def create_folder(path):
@@ -133,8 +164,11 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     # models.resnet18(num_classes=365)
     model = ColorNet()
     # print(model)
-
+    args.smooth = args.smooth_eps > 0.0
+    args.mixup = args.alpha > 0.0
     args.gpu = gpu
+
+    optimizer_init_lr = args.warmup_lr if args.warmup else args.lr
 
     if args.gpu is not None:
         print("Use GPU: {} for training".format(args.gpu))
@@ -192,10 +226,13 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     # criterion = nn.MSELoss().cuda() if use_gpu else nn.MSELoss()
     optimizer = None
     if args.optmzr == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=1e-4)
+        optimizer = torch.optim.SGD(model.parameters(), lr=optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
     elif args.optmzr == 'adam':
         # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+        optimizer = torch.optim.Adam(model.parameters(), lr=optimizer_init_lr)
+
+    if args.warmup:
+        scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
 
     # Resume from checkpoint
     if args.resume:
