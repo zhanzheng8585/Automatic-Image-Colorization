@@ -5,12 +5,6 @@ python -u main.py           /home/zhanzheng/places365_standard \
 							-j 16 \
 							--optmzr sgd \
 							--lr 0.001 \
-							--warmup \
-					   		--warmup-epochs 5 \
-					   		--mixup \
-					   		--alpha 0.3 \
-					   		--smooth \
-					   		--smooth-eps 0.1 \
                             --epochs 100 &&
 echo "Congratus! Finished *color* training!"
 
