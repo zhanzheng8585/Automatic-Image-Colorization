@@ -89,6 +89,8 @@ parser.add_argument('--smooth-eps', type=float, default=0.0, metavar='M',
 parser.add_argument('--no-tricks', action='store_true', default=False,
                     help='disable all training tricks and restore original classic training process')
 
+args = parser.parse_args()
+
 """ disable all bag of tricks"""
 if args.no_tricks:
     # disable all trick even if they are set to some value
@@ -125,7 +127,7 @@ def main():
     # Current best losses
     use_gpu = torch.cuda.is_available()
     best_losses = 1000.0
-    args = parser.parse_args()
+    # args = parser.parse_args()
     print('Arguments: {}'.format(args))
 
     path_now = os.getcwd()
