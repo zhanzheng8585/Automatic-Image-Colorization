@@ -434,7 +434,10 @@ def validate(val_loader, model, criterion, save_images, epoch):
         data_time.update(time.time() - end)
 
         # Run forward pass
-        output_ab = model(input_gray_variable) # throw away class predictions
+
+        with torch.no_grad():
+            output_ab = model(input_gray_variable) # throw away class predictions
+        
         loss = criterion(output_ab, input_ab_variable) # check this!
         
         # Record loss and measure accuracy
