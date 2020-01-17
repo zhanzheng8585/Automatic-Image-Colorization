@@ -233,9 +233,6 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
         optimizer = torch.optim.Adam(model.parameters(), lr=optimizer_init_lr)
 
-    if args.warmup:
-        scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
-
     # Resume from checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
@@ -297,6 +294,9 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
                                                    gamma=0.1)
     else:
         raise Exception("unknown lr scheduler")
+
+    if args.warmup:
+        scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
 
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
