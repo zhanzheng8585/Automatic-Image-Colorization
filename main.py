@@ -74,7 +74,7 @@ parser.add_argument('--multiprocessing-distributed', action='store_true',
                          'multi node data parallel training')
 parser.add_argument('--warmup', action='store_true', default=False,
                     help='warm-up scheduler')
-parser.add_argument('--warmup-lr', type=float, default=0.0001, metavar='M',
+parser.add_argument('--warmup-lr', type=float, default=0.00005, metavar='M',
                     help='warmup-lr, smaller than original lr')
 parser.add_argument('--warmup-epochs', type=int, default=0, metavar='M',
                     help='number of epochs for lr warmup')
