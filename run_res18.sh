@@ -5,6 +5,7 @@ python -u main.py           /home/zhanzheng/places365_standard \
 							-j 16 \
 							--optmzr sgd \
 							--lr 0.001 \
+							--no-tricks \
                             --epochs 100 &&
 echo "Congratus! Finished *color* training!"
 
