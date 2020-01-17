@@ -423,7 +423,7 @@ def validate(val_loader, model, criterion, save_images, epoch):
     for i, (input_gray, input_ab, target) in enumerate(val_loader):
         
         # Use GPU if available
-        target = target.cuda() if use_gpu else target
+        # target = target.cuda() if use_gpu else target
 
         with torch.no_grad():
             input_gray_variable = Variable(input_gray).cuda() if use_gpu else Variable(input_gray)
