@@ -4,7 +4,7 @@ python -u main.py           /home/zhanzheng/places365_standard \
 							--batch-size 128 \
 							-j 16 \
 							--optmzr sgd \
-							--lr 0.001 \
+							--lr 0.0001 \
 							--warmup \
 					   		--warmup-epochs 4 \
                             --epochs 50 &&
