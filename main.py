@@ -376,6 +376,7 @@ def validate(val_loader, model, criterion, save_images, epoch):
     end = time.time()
     for i, (input_gray, input_ab, target) in enumerate(val_loader):
         
+        scheduler.step()
         # Use GPU if available
         target = target.cuda() if use_gpu else target
 
