@@ -434,7 +434,6 @@ def validate(val_loader, model, criterion, save_images, epoch):
         data_time.update(time.time() - end)
 
         # Run forward pass
-
         with torch.no_grad():
             output_ab = model(input_gray_variable) # throw away class predictions
         
