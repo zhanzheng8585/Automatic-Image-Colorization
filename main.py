@@ -284,9 +284,9 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
         # epoch_milestones = [40, 80, 120, 160, 450]
         if args.optmzr == 'sgd':
-            epoch_milestones = [20, 40, 60, 80, 100]
+            epoch_milestones = [10, 20, 30, 40]
         elif args.optmzr == 'adam':
-            epoch_milestones = [10, 20, 40, 60, 80, 100]
+            epoch_milestones = [10, 20, 30, 40]
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
         """
@@ -356,6 +356,9 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
     end = time.time()
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
         
+        if args.mixup:
+            input_gray, target_a, target_b, lam = mixup_data(input_gray, target, args.alpha)
+
         scheduler.step()
 
         # Use GPU if available
@@ -368,7 +371,11 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
 
         # Run forward pass
         output_ab = model(input_gray_variable) # throw away class predictions
-        loss = criterion(output_ab, input_ab_variable) # MSE
+
+        if args.mixup:
+            loss = mixup_criterion(criterion, output_ab, target_a, target_b, lam, args.smooth)
+        else:
+            loss = criterion(output_ab, input_ab_variable) # MSE
         
         # Record loss and measure accuracy
         losses.update(loss.item(), input_gray.size(0))
