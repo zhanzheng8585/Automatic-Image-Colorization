@@ -6,8 +6,6 @@ python -u main.py           /home/zhanzheng/places365_standard \
 							-j 16 \
 							--optmzr sgd \
 							--lr 0.0001 \
-							--warmup \
-					   		--warmup-epochs 2 \
                             --epochs 50 &&
 echo "Congratus! Finished *color* training!"
 
