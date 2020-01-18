@@ -371,7 +371,7 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
         
         scheduler.step()
-        
+
         if args.mixup:
             input_gray, target_a, target_b, lam = mixup_data(input_gray, target, args.alpha)
 
@@ -414,7 +414,7 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
                     args.optmzr, current_lr, epoch, i, 
                     len(train_loader), batch_time=batch_time,
-                   data_time=data_time, loss=losses)) 
+                    data_time=data_time, loss=losses)) 
 
     print('Finished training epoch {}'.format(epoch))
 
@@ -449,10 +449,10 @@ def validate(val_loader, model, criterion, save_images, epoch):
         with torch.no_grad():
             output_ab = model(input_gray_variable) # throw away class predictions
         
-        loss = criterion(output_ab, input_ab_variable) # check this!
+            loss = criterion(output_ab, input_ab_variable) # check this!
         
-        # Record loss and measure accuracy
-        losses.update(loss.item(), input_gray.size(0))
+            # Record loss and measure accuracy
+            losses.update(loss.item(), input_gray.size(0))
 
         # Save images to file
         if save_images:
