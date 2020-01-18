@@ -370,6 +370,8 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
     end = time.time()
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
         
+        scheduler.step()
+        
         if args.mixup:
             input_gray, target_a, target_b, lam = mixup_data(input_gray, target, args.alpha)
 
@@ -396,7 +398,6 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        scheduler.step()
 
         # Record time to do forward and backward passes
         batch_time.update(time.time() - end)
