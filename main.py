@@ -283,20 +283,27 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
         # epoch_milestones = [40, 80, 120, 160, 450]
         if args.optmzr == 'sgd':
-            epoch_milestones = [10, 20, 30, 40]
+            epoch_milestones = [2, 10, 20, 30, 40]
         elif args.optmzr == 'adam':
             epoch_milestones = [10, 20, 30, 40]
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
         """
+        # scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+        #                                            milestones=[i * len(train_loader) for i in epoch_milestones],
+        #                                            gamma=0.1)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                                   milestones=[i * len(train_loader) for i in epoch_milestones],
+                                                   milestones=epoch_milestones,
                                                    gamma=0.1)
     else:
         raise Exception("unknown lr scheduler")
 
     if args.warmup:
-        scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
+        if args.resume:
+            if args.start_epoch < args.warmup_epochs:
+                scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=(args.warmup_epochs - args.start_epoch) * len(train_loader), after_scheduler=scheduler)
+        else:
+            scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
 
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
