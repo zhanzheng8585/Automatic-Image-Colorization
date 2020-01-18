@@ -289,12 +289,12 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
         """
-        # scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-        #                                            milestones=[i * len(train_loader) for i in epoch_milestones],
-        #                                            gamma=0.1)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                                   milestones=epoch_milestones,
+                                                   milestones=[i * len(train_loader) for i in epoch_milestones],
                                                    gamma=0.1)
+        # scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+        #                                            milestones=epoch_milestones,
+        #                                            gamma=0.1)
     else:
         raise Exception("unknown lr scheduler")
 
