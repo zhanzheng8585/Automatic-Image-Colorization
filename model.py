@@ -81,8 +81,10 @@ class ColorNet(nn.Module):
 
         # Only needed if not resuming from a checkpoint: load pretrained ResNet-gray model
         if torch.cuda.is_available(): # and only if gpu is available
-            resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
-            resnet_gray_model.load_state_dict(resnet_gray_weights)
+            resnet_gray_model.cuda()
+            # resnet_gray_weights = torch.load('pretrained/resnet_gray_weights.pth.tar') #torch.load('pretrained/resnet_gray.tar')['state_dict']
+            resnet_gray_model.load_state_dict(torch.load('pretrained/resnet_gray_weights.pth.tar'))
+            resnet_gray_model.cuda()
             print('Pretrained ResNet-gray weights loaded')
 
         # Extract midlevel and global features from ResNet-gray
