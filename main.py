@@ -241,6 +241,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
             args.start_epoch = checkpoint['epoch']
             best_losses = checkpoint['best_losses']
             model.load_state_dict(checkpoint['state_dict'])
+            model.cuda()
             optimizer.load_state_dict(checkpoint['optimizer'])
             print('Finished loading checkpoint. Resuming from epoch {}'.format(checkpoint['epoch']))
         else:
@@ -250,6 +251,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         print(args.pretrained)
         if os.path.isfile(args.pretrained):
             model.load_state_dict(torch.load(args.pretrained))
+            model.cuda()
             print('Loaded pretrained model.')
         else:
             print('Pretrained model filepath incorrect.')
