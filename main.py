@@ -301,10 +301,13 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     if args.warmup:
         if args.resume:
             if args.start_epoch < args.warmup_epochs:
-                scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=(args.warmup_epochs - args.start_epoch) * len(train_loader), after_scheduler=scheduler)
+                scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, 
+                    total_iter=(args.warmup_epochs - args.start_epoch) * len(train_loader), after_scheduler=scheduler)
+                print("warmup lr")
         else:
             scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
-
+            print("warmup lr")
+            
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
         save_images = True
