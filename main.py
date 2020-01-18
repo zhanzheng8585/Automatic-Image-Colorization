@@ -283,7 +283,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         # my learning rate scheduler for cifar, following https://github.com/kuangliu/pytorch-cifar
         # epoch_milestones = [40, 80, 120, 160, 450]
         if args.optmzr == 'sgd':
-            epoch_milestones = [2, 10, 20, 30, 40]
+            epoch_milestones = [10, 20, 30, 40]
         elif args.optmzr == 'adam':
             epoch_milestones = [10, 20, 30, 40]
         """Set the learning rate of each parameter group to the initial lr decayed
@@ -307,7 +307,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         else:
             scheduler = GradualWarmupScheduler(optimizer, multiplier=args.lr / args.warmup_lr, total_iter=args.warmup_epochs * len(train_loader), after_scheduler=scheduler)
             print("warmup lr")
-            
+
     # If in evaluation (validation) mode, do not train
     if args.evaluate:
         save_images = True
@@ -371,8 +371,6 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
         if args.mixup:
             input_gray, target_a, target_b, lam = mixup_data(input_gray, target, args.alpha)
 
-        scheduler.step()
-
         # Use GPU if available
         input_gray_variable = Variable(input_gray).cuda() if use_gpu else Variable(input_gray)
         input_ab_variable = Variable(input_ab).cuda() if use_gpu else Variable(input_ab)
@@ -396,7 +394,8 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        
+        scheduler.step()
+
         # Record time to do forward and backward passes
         batch_time.update(time.time() - end)
         end = time.time()
