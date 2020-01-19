@@ -170,7 +170,6 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     args.mixup = args.alpha > 0.0
     args.gpu = gpu
 
-    optimizer_init_lr = args.warmup_lr if args.warmup else args.lr
 
     if args.gpu is not None:
         print("Use GPU: {} for training".format(args.gpu))
@@ -226,12 +225,6 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
 
     # Create loss function, optimizer #criterion = nn.CrossEntropyLoss().cuda() if use_gpu else nn.CrossEntropyLoss()
     # criterion = nn.MSELoss().cuda() if use_gpu else nn.MSELoss()
-    optimizer = None
-    if args.optmzr == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), lr=optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
-    elif args.optmzr == 'adam':
-        # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
-        optimizer = torch.optim.Adam(model.parameters(), lr=optimizer_init_lr)
 
     # Resume from checkpoint
     if args.resume:
@@ -277,6 +270,18 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     val_loader = torch.utils.data.DataLoader(val_imagefolder, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
     print('Loaded validation data.')
 
+    if args.warmup:
+        optimizer_init_lr = args.warmup_lr
+    else:
+        optimizer_init_lr = args.lr
+        
+    optimizer = None
+    if args.optmzr == 'sgd':
+        optimizer = torch.optim.SGD(model.parameters(), lr=optimizer_init_lr, momentum=0.9, weight_decay=1e-4)
+    elif args.optmzr == 'adam':
+        # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
+        optimizer = torch.optim.Adam(model.parameters(), lr=optimizer_init_lr)
+        
     scheduler = None
     if args.lr_scheduler == 'cosine':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len(train_loader),
