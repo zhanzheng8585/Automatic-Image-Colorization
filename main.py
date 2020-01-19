@@ -355,7 +355,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
             'epoch': epoch + 1,
             'best_losses': best_losses,
             'state_dict': model.state_dict(),
-            'optimizer': optimizer.state_dict(),
+            # 'optimizer': optimizer.state_dict(),
         }, is_best_so_far, 'checkpoints/checkpoint-epoch-{}.pth.tar'.format(epoch))
         
     return best_losses
