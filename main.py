@@ -235,7 +235,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
             best_losses = checkpoint['best_losses']
             model.load_state_dict(checkpoint['state_dict'])
             model.cuda()
-            optimizer.load_state_dict(checkpoint['optimizer'])
+            # optimizer.load_state_dict(checkpoint['optimizer'])
             print('Finished loading checkpoint. Resuming from epoch {}'.format(checkpoint['epoch']))
         else:
             print('Checkpoint filepath incorrect.')
