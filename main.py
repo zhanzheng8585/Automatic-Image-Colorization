@@ -287,7 +287,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
         if args.optmzr == 'sgd':
             epoch_milestones = [10, 20, 30, 40]
         elif args.optmzr == 'adam':
-            epoch_milestones = [10, 20, 30, 40]
+            epoch_milestones = [7, 17, 27, 37]
         """Set the learning rate of each parameter group to the initial lr decayed
             by gamma once the number of epoch reaches one of the milestones
         """
