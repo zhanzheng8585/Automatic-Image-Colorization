@@ -411,7 +411,7 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
                   'Epoch: [{2}][{3}/{4}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
+                  'Loss {loss.val:.6f} ({loss.avg:.6f})\t'.format(
                     args.optmzr, current_lr, epoch, i, 
                     len(train_loader), batch_time=batch_time,
                     data_time=data_time, loss=losses)) 
