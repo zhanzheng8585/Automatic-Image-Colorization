@@ -272,6 +272,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
 
     if args.warmup:
         optimizer_init_lr = args.warmup_lr
+        print("warmup lr")
     else:
         optimizer_init_lr = args.lr
         
@@ -281,7 +282,7 @@ def main_worker(gpu, ngpus_per_node, args, best_losses, use_gpu):
     elif args.optmzr == 'adam':
         # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay = args.weight_decay)
         optimizer = torch.optim.Adam(model.parameters(), lr=optimizer_init_lr)
-        
+
     scheduler = None
     if args.lr_scheduler == 'cosine':
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len(train_loader),
