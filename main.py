@@ -403,7 +403,7 @@ def train(train_loader, model, criterion, optimizer, epoch, scheduler, args):
         loss.backward()
         optimizer.step()
         scheduler.step()
-        
+
         # Record time to do forward and backward passes
         batch_time.update(time.time() - end)
         end = time.time()
@@ -477,7 +477,7 @@ def validate(val_loader, model, criterion, save_images, epoch):
         if i % args.print_freq == 0:
             print('Validate: [{0}/{1}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
+                  'Loss {loss.val:.6f} ({loss.avg:.6f})\t'.format(
                    i, len(val_loader), batch_time=batch_time, loss=losses))
 
     print('Finished validation.')
